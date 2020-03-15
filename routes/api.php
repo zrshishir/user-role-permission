@@ -14,4 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('shishir', 'Auth\AuthController@shishir')->name('shishir');
+Route::get('test', 'Auth\AuthController@test')->name('test');
+Route::post('login', 'Auth\AuthController@login')->name('login');
+Route::post('signup', 'Auth\AuthController@signup')->name('login');

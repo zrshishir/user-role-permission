@@ -15,20 +15,22 @@ class CreateActivityLogsTable extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('action_type');
-            $table->string('request_url');
-            $table->string('os');
-            $table->string('browser');
-            $table->string('robot');
-            $table->string('device');
-            $table->string('ip');
-            $table->string('controller');
-            $table->unsignedBigInteger('user_id');
-            $table->string('status_code');
-            $table->string('response_message');
+            $table->string('action_type')->nullable();
+            $table->string('request_url')->nullable();
+            $table->string('os')->nullable();
+            $table->string('browser')->nullable();
+            $table->string('robot')->nullable();
+            $table->string('device')->nullable();
+            $table->string('ip')->nullable();
+            $table->string('controller')->nullable();
+            $table->string('user_id')->nullable();
+            $table->string('error_code')->nullable();
+            $table->string('status_code')->nullable();
+            $table->string('response_message')->nullable();
+            $table->text('response_data')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            
         });
     }
 
