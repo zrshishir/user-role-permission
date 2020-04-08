@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Role;
+namespace App\Http\Controllers\RoleToUser;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
-use App\Model\Role\Role;
+use App\Model\RoleToUser\RoleToUser;
 use Validator, Auth;
 use App\Http\Controllers\Helper\HelperController;
 
-class RoleController extends Controller
+class RoleToUserController extends Controller
 {
     private $helping = "";
 
@@ -18,42 +18,50 @@ class RoleController extends Controller
     }
 
     public function index(){
-       
-        $roles = Role::get();
-        $responseData = $this->helping->indexData(['roles'=> $roles]);
+
+        $roleToUsers = RoleToUser::get();
+        $responseData = $this->helping->indexData(['roleToUsers'=> $roleToUsers]);
         return response()->json($responseData);
 
     }
 
     public function store(Request $request){
-
         $userId = Auth::user()->id;
-        $infoExist = Role::find($request->id);
+        $infoExist = RoleToUser::find($request->id);
         
         if(! $infoExist){
-            $validator = Validator::make($request->all(), [
-                'title' => 'required|string'
-            ]);
-            
-            if($validator->fails()){
-                $errors = $validator->errors();
-                $errorMsg = null;
-                
-                foreach ($errors->all() as $msg) {
-                    $errorMsg .= $msg;
-                }
+            $isExixt = RoleToUser::where('role_id', $request->role_id)->where('user_id', $request->user_id)->first();
 
-                $responseData = $this->helping->validatingErrors($errorMsg);
+            if(! $isExixt){
+                $validator = Validator::make($request->all(), [
+                    'role_id' => 'required|numeric',
+                    'user_id' => 'required|numeric',
+                ]);
+                
+                if($validator->fails()){
+                    $errors = $validator->errors();
+                    $errorMsg = null;
+                    
+                    foreach ($errors->all() as $msg) {
+                        $errorMsg .= $msg;
+                    }
+    
+                    $responseData = $this->helping->validatingErrors($errorMsg);
+                    return response()->json($responseData);
+                }
+    
+                $contactInfoId = RoleToUser::create([
+                    'role_id' => $request->role_id,
+                    'user_id' => $request->user_id,
+                ]);
+            }else{
+                $responseData = $this->helping->existData();
                 return response()->json($responseData);
             }
-
-            $contactInfoId = Role::create([
-                'title' => $request->title
-            ]);
-            
         }else{
             $validator = Validator::make($request->all(), [
-                'title' => 'required|string'
+                'role_id' => 'required|numeric',
+                'user_id' => 'required|numeric',
             ]);
             
             if($validator->fails()){
@@ -67,14 +75,14 @@ class RoleController extends Controller
                 $responseData = $this->helping->validatingErrors($errorMsg);
                 return response()->json($responseData);
             }
-            $contactInfoId = Role::where('id', $request->id)->update([
-                'title' => $request->title
+            $contactInfoId = RoleToUser::where('id', $request->id)->update([
+                'role_id' => $request->role_id,
+                'user_id' => $request->user_id,
             ]);
         }
-
         if($contactInfoId){
-            $Roles = Role::get();
-            $responseData = $this->helping->savingData(['roles'=> $Roles]);
+            $urlToRoles = RoleToUser::get();
+            $responseData = $this->helping->savingData(['roleToUsers'=> $urlToRoles]);
             return response()->json($responseData);
         }else{
              $responseData = $this->helping->serverError();

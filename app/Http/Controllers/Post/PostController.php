@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Role;
+namespace App\Http\Controllers\Post;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
-use App\Model\Role\Role;
+use App\Model\Post\Post;
 use Validator, Auth;
 use App\Http\Controllers\Helper\HelperController;
 
-class RoleController extends Controller
+class PostController extends Controller
 {
     private $helping = "";
 
@@ -18,17 +18,16 @@ class RoleController extends Controller
     }
 
     public function index(){
-       
-        $roles = Role::get();
-        $responseData = $this->helping->indexData(['roles'=> $roles]);
+
+        $posts = Post::get();
+        $responseData = $this->helping->indexData(['posts'=> $posts]);
         return response()->json($responseData);
 
     }
 
     public function store(Request $request){
-
         $userId = Auth::user()->id;
-        $infoExist = Role::find($request->id);
+        $infoExist = Post::find($request->id);
         
         if(! $infoExist){
             $validator = Validator::make($request->all(), [
@@ -47,10 +46,9 @@ class RoleController extends Controller
                 return response()->json($responseData);
             }
 
-            $contactInfoId = Role::create([
-                'title' => $request->title
+            $contactInfoId = Post::create([
+                'title' => $title
             ]);
-            
         }else{
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string'
@@ -67,39 +65,18 @@ class RoleController extends Controller
                 $responseData = $this->helping->validatingErrors($errorMsg);
                 return response()->json($responseData);
             }
-            $contactInfoId = Role::where('id', $request->id)->update([
+            $contactInfoId = Post::where('id', $request->id)->update([
                 'title' => $request->title
             ]);
         }
 
         if($contactInfoId){
-            $Roles = Role::get();
-            $responseData = $this->helping->savingData(['roles'=> $Roles]);
+            $posts = Post::get();
+            $responseData = $this->helping->savingData(['posts'=> $posts]);
             return response()->json($responseData);
         }else{
              $responseData = $this->helping->serverError();
             return response()->json($responseData);
         }
-    }
-
-    public function delete($id){
-        if($id){
-            if(! is_numeric($id)){
-                return response()->json($this->helping->notNumeric());
-            }
-   
-            // $dbData = Role::find($id);
-            $deleteData = Role::where('id', $id)->delete();
-            
-            if(! $deleteData){
-                return response()->json($this->helping->noContent());
-            }
-
-            $datas = Role::get();
-            return response()->json($this->helping->deletingData($datas));
-        }
-
-        $datas = Role::get();
-        return response()->json($this->helping->invalidDeleteId($datas));
     }
 }

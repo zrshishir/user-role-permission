@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Url;
+namespace App\Http\Controllers\UrlToRole;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
-use App\Model\Url\Url;
+use App\Model\UrlToRole\UrlToRole;
 use Validator, Auth;
 use App\Http\Controllers\Helper\HelperController;
 
-class UrlController extends Controller
+class UrlToRoleController extends Controller
 {
     private $helping = "";
 
@@ -18,30 +18,24 @@ class UrlController extends Controller
     }
 
     public function index(){
-        // $name = trim('Mohammad Ziaur Rahman Shishir', "  ");
-        // $ns = preg_replace('/\s+/', ' ', trim('Mohammad Ziaur Rahman Shishir', "  "));
-        
-        // return response()->json($ns);
-        $urls = Url::get();
-        $responseData = $this->helping->indexData(['urls'=> $urls]);
+
+        $urlToRoles = UrlToRole::get();
+        $responseData = $this->helping->indexData(['urlToRoles'=> $urlToRoles]);
         return response()->json($responseData);
 
     }
 
     public function store(Request $request){
-        
         $userId = Auth::user()->id;
-        $infoExist = Url::find($request->id);
+        $infoExist = UrlToRole::find($request->id);
         
         if(! $infoExist){
-            $isExist = Url::where('url', $request->url)->where('action_type', $request->action_type)->first();
+            $isExixt = UrlToRole::where('url_id', $request->url_id)->where('role_id', $request->role_id)->first();
 
-            if(! $isExist){
+            if(! $isExixt){
                 $validator = Validator::make($request->all(), [
-                    'title' => 'required|string',
-                    'url' => 'required|string',
-                    'operation' => 'required|string',
-                    'action_type' => 'required|string'
+                    'url_id' => 'required|numeric',
+                    'role_id' => 'required|numeric',
                 ]);
                 
                 if($validator->fails()){
@@ -56,22 +50,19 @@ class UrlController extends Controller
                     return response()->json($responseData);
                 }
     
-                $contactInfoId = Url::create([
-                    'title' => $request->title,
-                    'url' => $request->url,
-                    'operation' => $request->operation,
-                    'action_type' => $request->action_type
+                $contactInfoId = UrlToRole::create([
+                    'url_id' => $request->url_id,
+                    'role_id' => $request->role_id,
                 ]);
             }else{
                 $responseData = $this->helping->existData();
                 return response()->json($responseData);
             }
+            
         }else{
             $validator = Validator::make($request->all(), [
-                'title' => 'required|string',
-                'url' => 'required|string',
-                'operation' => 'required|string',
-                'action_type' => 'required|string'
+                'url_id' => 'required|numeric',
+                'role_id' => 'required|numeric',
             ]);
             
             if($validator->fails()){
@@ -85,17 +76,15 @@ class UrlController extends Controller
                 $responseData = $this->helping->validatingErrors($errorMsg);
                 return response()->json($responseData);
             }
-            $contactInfoId = Url::where('id', $request->id)->update([
-                'title' => $request->title,
-                'url' => $request->url,
-                'operation' => $request->operation,
-                'action_type' => $request->action_type,
+            $contactInfoId = UrlToRole::where('id', $request->id)->update([
+                'url_id' => $request->url_id,
+                'role_id' => $request->role_id,
             ]);
         }
 
         if($contactInfoId){
-            $urls = Url::get();
-            $responseData = $this->helping->savingData(['urls'=> $urls]);
+            $urlToRoles = UrlToRole::get();
+            $responseData = $this->helping->savingData(['urlToRoles'=> $urlToRoles]);
             return response()->json($responseData);
         }else{
              $responseData = $this->helping->serverError();
@@ -109,18 +98,17 @@ class UrlController extends Controller
                 return response()->json($this->helping->notNumeric());
             }
    
-            $dbData = Url::find($id);
-    
-            if(! $dbData){
+            $deleteData = UrlToRole::where('id', $id)->delete();
+            
+            if(! $deleteData){
                 return response()->json($this->helping->noContent());
             }
 
-            $deleteData = Url::where('id', $id)->delete();
-            $datas = Url::get();
+            $datas = UrlToRole::get();
             return response()->json($this->helping->deletingData($datas));
         }
 
-        $datas = Url::get();
+        $datas = UrlToRole::get();
         return response()->json($this->helping->invalidDeleteId($datas));
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Model\Role\Role;
 
 

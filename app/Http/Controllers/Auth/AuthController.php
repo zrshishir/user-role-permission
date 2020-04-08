@@ -23,15 +23,15 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){ 
-        if(! Auth::attempt(['email' => request('email')])){
-            $responseData = $this->helping->invalidLogin("Incorrect email.");
-            return response()->json($responseData); 
-        }
+        // if(! Auth::attempt(['email' => request('email')])){
+        //     $responseData = $this->helping->invalidLogin("Incorrect email.");
+        //     return response()->json($responseData); 
+        // }
 
-        if(! Auth::attempt(['password' => request('password')])){
-            $responseData = $this->helping->invalidLogin("Incorrect password.");
-            return response()->json($responseData); 
-        }
+        // if(! Auth::attempt(['password' => request('password')])){
+        //     $responseData = $this->helping->invalidLogin("Incorrect password.");
+        //     return response()->json($responseData); 
+        // }
 
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             

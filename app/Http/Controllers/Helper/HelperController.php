@@ -64,6 +64,10 @@ class HelperController extends Controller
         return $this->responseProcess(0, 200, "You are logged in...", $datas);
     }
 
+    public function existData(){
+        return $this->responseProcess(1, 400, "You have already provided this data.", "");
+    }
+
     public function responseProcess($errorCode, $statusCode, $msg, $data){
         $responseData['error'] = $errorCode; 
         $responseData['statusCode'] = $statusCode;

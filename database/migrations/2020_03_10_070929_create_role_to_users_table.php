@@ -17,12 +17,12 @@ class CreateRoleToUsersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('url_to_role_id');
+           
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('role_id')->references('id')->on('roles');
-            $table->foreign('url_to_role_id')->references('id')->on('url_to_roles');
+            $table->foreign('user_id')->references('id')->on('users');
+           
         });
     }
 
